@@ -1,6 +1,7 @@
 locals {
   project = "${var.prefix}-${var.env_short}-${var.location_short}-${var.domain}"
-  product = "${var.prefix}-${var.env_short}"
+  product = var.location_short != "neu" ? "${var.prefix}-${var.env_short}" : "${var.prefix}-${var.env_short}-${var.location_short}"
+  product_noenv = "${var.prefix}-${var.env_short}"
 
   app_insights_ips_west_europe = [
     "51.144.56.96/28",
@@ -32,6 +33,7 @@ locals {
 
   aks_subnet_name = "${var.prefix}-${var.env_short}-${var.location_short}-${var.env}-aks-snet"
 
-
+  nodo_db_dns_zone = "${var.env_short}.db-nodo-pagamenti.com"
+  nodo_db_dns_zone_rg = "pagopa-${var.env_short}-data-rg"
 }
 
