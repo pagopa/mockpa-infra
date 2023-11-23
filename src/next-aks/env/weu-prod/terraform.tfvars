@@ -18,3 +18,6 @@ tags = {
 enable_velero_backup = true
 velero_sa_backup_enabled = true
 velero_sa_backup_retention_days = 15
+
+
+log_analytics_workspace_name = "pagopa-p-law"

@@ -75,6 +75,17 @@ variable "velero_backup_sa_replication_type" {
   description = "(Optional) backup storage account replication type"
 }
 
+variable "log_analytics_workspace_name" {
+  type        = string
+  description = "Specifies the name of the Log Analytics Workspace."
+}
+
+
+variable "monitor_resource_group_name" {
+  type        = string
+  description = "Monitor resource group name"
+}
+
 variable "tags" {
   type = map(any)
   default = {

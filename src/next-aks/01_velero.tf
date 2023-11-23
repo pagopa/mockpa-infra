@@ -41,7 +41,7 @@ module "velero" {
 module "aks_namespace_backup" {
   count = var.enable_velero_backup ? 1 : 0
 
-  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//kubernetes_velero_backup?ref=v7.24.0"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//kubernetes_velero_backup?ref=b30a8a6"
 
   aks_cluster_name = local.aks_name
   backup_name = "daily-backup"
@@ -53,4 +53,19 @@ module "aks_namespace_backup" {
 
 
   depends_on = [module.velero]
+
+  alert_enabled = true
+
+  alert_action = [
+     {
+      action_group_id    = data.azurerm_monitor_action_group.email.id
+      webhook_properties = null
+    },
+    {
+      action_group_id    = data.azurerm_monitor_action_group.slack.id
+      webhook_properties = null
+    }
+  ]
+
+  tags = var.tags
 }

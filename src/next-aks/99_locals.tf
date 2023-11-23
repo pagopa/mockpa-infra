@@ -9,4 +9,8 @@ locals {
 
 
   aks_name = "${local.project}-aks"
+
+  monitor_rg_name                 = "pagopa-${var.env_short}-monitor-rg"
+  monitor_action_group_slack_name = "SlackPagoPA"
+  monitor_action_group_email_name = "PagoPA"
 }

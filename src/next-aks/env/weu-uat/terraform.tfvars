@@ -15,3 +15,4 @@ tags = {
   CostCenter  = "TS310 - PAGAMENTI & SERVIZI"
 }
 
+log_analytics_workspace_name = "pagopa-u-law"
