@@ -51,6 +51,8 @@ data "azurerm_private_dns_zone" "postgres" {
 }
 
 module "mocker_pgflex_snet" {
+  #  count  = var.env_short != "d" ? 1 : 0
+  count  = 0
   source = "git::https://github.com/pagopa/terraform-azurerm-v3//subnet?ref=v6.11.2"
 
   name                                      = format("%s-mocker-pgflex-snet", local.product)
