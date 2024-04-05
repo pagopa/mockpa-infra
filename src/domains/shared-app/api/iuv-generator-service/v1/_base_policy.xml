@@ -1,7 +1,7 @@
 <policies>
     <inbound>
       <base />
-      <set-backend-service base-url="https://${hostname}/pagopa-iuv-generator-service" />
+      <set-backend-service base-url="https://${hostname}/pagopa-iuvgenerator-service" />
     </inbound>
     <outbound>
       <base />
