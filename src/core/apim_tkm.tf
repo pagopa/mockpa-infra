@@ -3,7 +3,7 @@
 ##############
 
 module "apim_tkm_product" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_product?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_product?ref=v7.76.0"
 
   product_id   = "tkm"
   display_name = "Token Manager pagoPA"
@@ -45,7 +45,7 @@ resource "azurerm_api_management_api_version_set" "tkm_consent_manager_api" {
 
 module "apim_tkm_consent_manager_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-tkm-consent-manager-api", local.project)
   api_management_name   = module.apim.name
@@ -63,7 +63,7 @@ module "apim_tkm_consent_manager_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-ms-consent-manager/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/tkm_api/tkm-ms-consent-manager/v1/_base_policy.xml.tpl", {
@@ -97,7 +97,7 @@ resource "azurerm_api_management_api_version_set" "tkm_consent_manager_internal_
 
 module "apim_tkm_consent_manager_internal_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-tkm-consent-manager-internal-api", local.project)
   api_management_name   = module.apim.name
@@ -115,7 +115,7 @@ module "apim_tkm_consent_manager_internal_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-ms-consent-manager-internal/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/tkm_api/tkm-ms-consent-manager-internal/v1/_base_policy.xml.tpl")
@@ -146,7 +146,7 @@ resource "azurerm_api_management_api_version_set" "tkm_card_manager_api" {
 
 module "apim_tkm_card_manager_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-tkm-card-manager-api", local.project)
   api_management_name   = module.apim.name
@@ -164,7 +164,7 @@ module "apim_tkm_card_manager_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-ms-card-manager/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/tkm_api/tkm-ms-card-manager/v1/_base_policy.xml.tpl")
@@ -195,7 +195,7 @@ resource "azurerm_api_management_api_version_set" "tkm_acquirer_manager_api" {
 
 module "apim_tkm_acquirer_manager_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-tkm-acquirer-manager-api", local.project)
   api_management_name   = module.apim.name
@@ -213,7 +213,7 @@ module "apim_tkm_acquirer_manager_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-ms-acquirer-manager/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/tkm_api/tkm-ms-acquirer-manager/v1/_base_policy.xml.tpl", {
@@ -246,7 +246,7 @@ resource "azurerm_api_management_api_version_set" "tkm_test_utility_api" {
 
 module "apim_tkm_test_utility_api_v1" {
   count  = var.env_short == "d" ? 1 : 0
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-tkm-ms-test-utility-api", local.project)
   api_management_name   = module.apim.name
@@ -264,7 +264,7 @@ module "apim_tkm_test_utility_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-ms-test-utility/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/tkm_api/tkm-ms-test-utility/v1/_base_policy.xml.tpl")
@@ -297,7 +297,7 @@ resource "azurerm_api_management_api_version_set" "tkm_mock_circuit_api" {
 module "apim_tkm_mock_circuit_api_v1" {
   count = var.env_short == "u" || var.env_short == "d" ? 1 : 0
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-tkm-mock-circuit-api"
   api_management_name   = module.apim.name
@@ -315,7 +315,7 @@ module "apim_tkm_mock_circuit_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/tkm_api/tkm-mock-circuit-api/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/tkm_api/tkm-mock-circuit-api/v1/_base_policy.xml.tpl", {

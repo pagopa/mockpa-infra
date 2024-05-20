@@ -3,7 +3,7 @@
 ##############
 
 module "apim_payment_manager_product" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_product?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_product?ref=v7.76.0"
 
   product_id   = "payment-manager"
   display_name = "Payment Manager pagoPA"
@@ -64,7 +64,7 @@ resource "azurerm_api_management_api_version_set" "buyerbanks_api" {
 
 module "apim_buyerbanks_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-buyerbanks-api", var.env_short)
   api_management_name   = module.apim.name
@@ -82,7 +82,7 @@ module "apim_buyerbanks_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/buyerbanks/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/buyerbanks/_base_policy.xml.tpl")
@@ -113,7 +113,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapi_api" {
 
 module "apim_pm_restapi_api_v4" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapi-api"
   api_management_name   = module.apim.name
@@ -131,7 +131,7 @@ module "apim_pm_restapi_api_v4" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi/v4/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/restapi/v4/_base_policy.xml.tpl", {
@@ -164,7 +164,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapi_old_api" {
 
 module "apim_pm_restapi_api_old_v4" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapi-old-api"
   api_management_name   = module.apim.name
@@ -182,7 +182,7 @@ module "apim_pm_restapi_api_old_v4" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi/v4/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/restapi/v4/_base_policy.xml.tpl", {
@@ -215,7 +215,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapicd_api" {
 
 module "apim_pm_restapicd_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapicd-api"
   api_management_name   = module.apim.name
@@ -233,7 +233,7 @@ module "apim_pm_restapicd_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-cd/v1/_base_policy.xml.tpl")
@@ -241,7 +241,7 @@ module "apim_pm_restapicd_api_v1" {
 
 module "apim_pm_restapicd_api_v2" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapicd-api"
   api_management_name   = module.apim.name
@@ -259,7 +259,7 @@ module "apim_pm_restapicd_api_v2" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd/v2/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-cd/v2/_base_policy.xml.tpl")
@@ -267,7 +267,7 @@ module "apim_pm_restapicd_api_v2" {
 
 module "apim_pm_restapicd_api_v3" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapicd-api"
   api_management_name   = module.apim.name
@@ -285,7 +285,7 @@ module "apim_pm_restapicd_api_v3" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd/v3/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/restapi-cd/v3/_base_policy.xml.tpl", {
@@ -308,7 +308,7 @@ locals {
 
 module "apim_pm_restapi_cd_assets" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-cd-assets-restapi"
   api_management_name   = module.apim.name
@@ -324,7 +324,7 @@ module "apim_pm_restapi_cd_assets" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd-assets/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-cd-assets/_base_policy.xml.tpl")
@@ -355,7 +355,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapicd_internal_api" {
 
 module "apim_pm_restapicd_internal_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapicd-internal-api"
   api_management_name   = module.apim.name
@@ -373,7 +373,7 @@ module "apim_pm_restapicd_internal_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd-internal/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-cd-internal/v1/_base_policy.xml.tpl")
@@ -381,7 +381,7 @@ module "apim_pm_restapicd_internal_api_v1" {
 
 module "apim_pm_restapicd_internal_api_v2" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapicd-internal-api"
   api_management_name   = module.apim.name
@@ -399,7 +399,7 @@ module "apim_pm_restapicd_internal_api_v2" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/restapi-cd-internal/v2/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-cd-internal/v2/_base_policy.xml.tpl")
@@ -430,7 +430,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapi_server_api" {
 
 module "apim_pm_restapi_server_api_v4" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapi-server-api"
   api_management_name   = module.apim.name
@@ -448,7 +448,7 @@ module "apim_pm_restapi_server_api_v4" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/restapi-server/v4/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-server/v4/_base_policy.xml.tpl")
@@ -479,7 +479,7 @@ resource "azurerm_api_management_api_version_set" "pm_restapirtd_api" {
 
 module "apim_pm_restapirtd_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapirtd-api"
   api_management_name   = module.apim.name
@@ -497,7 +497,7 @@ module "apim_pm_restapirtd_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/restapi-rtd/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-rtd/v1/_base_policy.xml.tpl")
@@ -505,7 +505,7 @@ module "apim_pm_restapirtd_api_v1" {
 
 module "apim_pm_restapirtd_api_v2" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-restapirtd-api"
   api_management_name   = module.apim.name
@@ -523,7 +523,7 @@ module "apim_pm_restapirtd_api_v2" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/restapi-rtd/v2/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/restapi-rtd/v2/_base_policy.xml.tpl")
@@ -553,7 +553,7 @@ resource "azurerm_api_management_api_version_set" "pm_auth_rtd_api" {
 
 module "apim_pm_auth_rtd_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-auth-rtd-api"
   api_management_name   = module.apim.name
@@ -571,7 +571,7 @@ module "apim_pm_auth_rtd_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/auth-rtd/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/auth-rtd/v1/_base_policy.xml.tpl")
@@ -579,7 +579,7 @@ module "apim_pm_auth_rtd_api_v1" {
 
 module "apim_pm_auth_rtd_api_v2" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-auth-rtd-api"
   api_management_name   = module.apim.name
@@ -597,7 +597,7 @@ module "apim_pm_auth_rtd_api_v2" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/auth-rtd/v2/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/auth-rtd/v2/_base_policy.xml.tpl")
@@ -623,7 +623,7 @@ data "azurerm_key_vault_secret" "pm_logging_ip" {
 
 module "apim_pm_logging_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-logging-api"
   api_management_name   = module.apim.name
@@ -639,7 +639,7 @@ module "apim_pm_logging_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/logging/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/logging/v1/_base_policy.xml.tpl")
@@ -669,7 +669,7 @@ resource "azurerm_api_management_api_version_set" "pm_adminpanel_api" {
 
 module "apim_pm_adminpanel_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-adminpanel-api"
   api_management_name   = module.apim.name
@@ -685,7 +685,7 @@ module "apim_pm_adminpanel_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/admin-panel/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/admin-panel/_base_policy.xml.tpl", {
@@ -722,7 +722,7 @@ data "azurerm_key_vault_secret" "pm_wisp_metadata" {
 
 module "apim_pm_wisp_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-wisp-api"
   api_management_name   = module.apim.name
@@ -738,7 +738,7 @@ module "apim_pm_wisp_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/wisp/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/wisp/_base_policy.xml.tpl")
@@ -778,7 +778,7 @@ resource "azurerm_api_management_api_version_set" "pm_ptg_api" {
 
 module "apim_pm_ptg_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v2.18.3"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-ptg-api"
   api_management_name   = module.apim.name
@@ -796,7 +796,7 @@ module "apim_pm_ptg_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/payment-transactions-gateway/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/payment-transactions-gateway/v1/_base_policy.xml.tpl")
@@ -828,7 +828,7 @@ resource "azurerm_api_management_api_version_set" "pm_per_nodo_api" {
 
 module "apim_pm_per_nodo_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-per-nodo-api"
   api_management_name   = module.apim.name
@@ -846,7 +846,7 @@ module "apim_pm_per_nodo_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/pm-per-nodo/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/pm-per-nodo/v1/_base_policy.xml.tpl")
@@ -877,7 +877,7 @@ resource "azurerm_api_management_api_version_set" "pm_events_api" {
 
 module "apim_pm_events_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-events-api"
   api_management_name   = module.apim.name
@@ -895,7 +895,7 @@ module "apim_pm_events_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/payment-events/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/payment-events/v1/_base_policy.xml.tpl")
@@ -903,7 +903,7 @@ module "apim_pm_events_v1" {
 
 module "apim_pm_per_nodo_v2" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${local.project}-pm-per-nodo-api"
   api_management_name   = module.apim.name
@@ -921,11 +921,11 @@ module "apim_pm_per_nodo_v2" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/pm-per-nodo/v2/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/pm-per-nodo/v2/_base_policy.xml.tpl", {
-    host                       = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name,
+    host                       = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name,
     ecommerce_ingress_hostname = var.ecommerce_ingress_hostname
   })
 }
@@ -955,7 +955,7 @@ resource "azurerm_api_management_api_version_set" "pmclient_iobpd_api" {
 
 module "apim_pmclient_iobpd_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pmclient-iobpd-api", local.project)
   api_management_name   = module.apim.name
@@ -973,7 +973,7 @@ module "apim_pmclient_iobpd_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/clients/io-bpd/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/io-bpd/_base_policy.xml.tpl", {
@@ -1005,7 +1005,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_paypalpsp_api" {
 
 module "apim_pm_paypalpsp_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-paypalpsp-api", local.project)
   api_management_name   = module.apim.name
@@ -1023,7 +1023,7 @@ module "apim_pm_paypalpsp_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/clients/paypal-psp/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/paypal-psp/v1/_base_policy.xml.tpl", {
@@ -1055,7 +1055,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_xpay_api" {
 
 module "apim_pm_xpay_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-xpay-api", local.project)
   api_management_name   = module.apim.name
@@ -1073,7 +1073,7 @@ module "apim_pm_xpay_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/clients/xpay/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/xpay/v1/_base_policy.xml.tpl", {
@@ -1105,7 +1105,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_bpd_api" {
 
 module "apim_pm_bpd_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-bpd-api", local.project)
   api_management_name   = module.apim.name
@@ -1123,7 +1123,7 @@ module "apim_pm_bpd_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/clients/bpd/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/bpd/v1/_base_policy.xml.tpl", {
@@ -1155,7 +1155,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_cobadge_api" {
 
 module "apim_pm_cobadge_api_v4" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-cobadge-api", local.project)
   api_management_name   = module.apim.name
@@ -1173,7 +1173,7 @@ module "apim_pm_cobadge_api_v4" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/clients/cobadge/v4/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/cobadge/v4/_base_policy.xml.tpl", {
@@ -1205,7 +1205,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_satispay_api" {
 
 module "apim_pm_satispay_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-satispay-api", local.project)
   api_management_name   = module.apim.name
@@ -1223,7 +1223,7 @@ module "apim_pm_satispay_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/clients/satispay/v1/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/satispay/v1/_base_policy.xml.tpl", {
@@ -1255,7 +1255,7 @@ resource "azurerm_api_management_api_version_set" "apim_pm_fesp_api" {
 
 module "apim_pm_fesp_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-fesp-api", local.project)
   api_management_name   = module.apim.name
@@ -1273,7 +1273,7 @@ module "apim_pm_fesp_api_v1" {
 
   content_format = "swagger-json"
   content_value = templatefile("./api/payment_manager_api/clients/fesp/_swagger.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_manager_api/clients/fesp/_base_policy.xml.tpl", {
@@ -1297,7 +1297,7 @@ locals {
 
 module "apim_pm_mock_services_fe" {
   count  = var.env_short != "p" ? 1 : 0
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-mock-services-fe-api", local.project)
   api_management_name   = module.apim.name
@@ -1313,7 +1313,7 @@ module "apim_pm_mock_services_fe" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/mock-services-fe/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/mock-services-fe/v1/_base_policy.xml.tpl")
@@ -1346,7 +1346,7 @@ module "apim_pm_mock_services_api_v1" {
 
   count = var.env_short != "p" ? 1 : 0
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-mock-services-api", local.project)
   api_management_name   = module.apim.name
@@ -1364,7 +1364,7 @@ module "apim_pm_mock_services_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/mock-services-api/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/mock-services-api/v1/_base_policy.xml.tpl")
@@ -1397,7 +1397,7 @@ module "apim_pm_test_utility_api_v1" {
 
   count = var.env_short == "d" ? 1 : 0
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-pm-test-utility-api", local.project)
   api_management_name   = module.apim.name
@@ -1415,7 +1415,7 @@ module "apim_pm_test_utility_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_manager_api/test-utility/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_manager_api/test-utility/v1/_base_policy.xml.tpl")

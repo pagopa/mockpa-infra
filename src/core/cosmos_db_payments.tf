@@ -6,18 +6,19 @@ resource "azurerm_resource_group" "cosmosdb_rg" {
 }
 
 module "cosmosdb_paymentsdb_snet" {
-  source               = "git::https://github.com/pagopa/azurerm.git//subnet?ref=v2.15.1"
+  source               = "git::https://github.com/pagopa/terraform-azurerm-v3.git//subnet?ref=v7.76.0"
   name                 = "${local.project}-cosmosb-paymentsdb-snet"
   address_prefixes     = var.cidr_subnet_cosmosdb_paymentsdb
   resource_group_name  = azurerm_resource_group.rg_vnet.name
   virtual_network_name = module.vnet.name
 
-  enforce_private_link_endpoint_network_policies = true
-  service_endpoints                              = ["Microsoft.Web"]
+  private_endpoint_network_policies_enabled = true
+  service_endpoints                         = ["Microsoft.Web"]
 }
 
 module "cosmos_payments_account" {
-  source   = "git::https://github.com/pagopa/azurerm.git//cosmosdb_account?ref=v2.1.18"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//cosmosdb_account?ref=v7.76.0"
+
   name     = "${local.project}-payments-cosmos-account"
   location = var.location
 
@@ -30,6 +31,7 @@ module "cosmos_payments_account" {
 
   enable_free_tier          = var.cosmos_document_db_params.enable_free_tier
   enable_automatic_failover = true
+  domain                    = null
 
   capabilities       = var.cosmos_document_db_params.capabilities
   consistency_policy = var.cosmos_document_db_params.consistency_policy
@@ -46,18 +48,17 @@ module "cosmos_payments_account" {
   allowed_virtual_network_subnet_ids = var.cosmos_document_db_params.public_network_access_enabled ? [] : []
 
   # private endpoint
-  private_endpoint_name    = "${local.project}-cosmos-payments-sql-endpoint"
-  private_endpoint_enabled = var.cosmos_document_db_params.private_endpoint_enabled
-  subnet_id                = module.cosmosdb_paymentsdb_snet.id
-  private_dns_zone_ids     = [azurerm_private_dns_zone.privatelink_documents_azure_com.id]
+  private_endpoint_sql_name = "${local.project}-cosmos-payments-sql-endpoint"
+  private_endpoint_enabled  = var.cosmos_document_db_params.private_endpoint_enabled
+  subnet_id                 = module.cosmosdb_paymentsdb_snet.id
+  private_dns_zone_sql_ids  = [azurerm_private_dns_zone.privatelink_documents_azure_com.id]
 
   tags = var.tags
-
 }
 
 ## Database
 module "payments_cosmos_db" {
-  source              = "git::https://github.com/pagopa/azurerm.git//cosmosdb_sql_database?ref=v2.1.15"
+  source              = "git::https://github.com/pagopa/terraform-azurerm-v3.git//cosmosdb_sql_database?ref=v7.76.0"
   name                = "db"
   resource_group_name = azurerm_resource_group.cosmosdb_rg.name
   account_name        = module.cosmos_payments_account.name
@@ -77,7 +78,7 @@ locals {
 }
 
 module "payments_cosmosdb_containers" {
-  source   = "git::https://github.com/pagopa/azurerm.git//cosmosdb_sql_container?ref=v3.2.4"
+  source   = "git::https://github.com/pagopa/terraform-azurerm-v3.git//cosmosdb_sql_container?ref=v7.76.0"
   for_each = { for c in local.payments_cosmosdb_containers : c.name => c }
 
   name                = each.value.name

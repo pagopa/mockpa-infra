@@ -3,7 +3,7 @@
 ##############
 
 module "apim_nodo_dei_pagamenti_monitoring_product" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_product?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_product?ref=v7.76.0"
 
   product_id   = "nodo-monitoring"
   display_name = "Nodo dei Pagamenti - Monitoring"
@@ -44,7 +44,7 @@ resource "azurerm_api_management_api_version_set" "nodo_monitoring_api" {
 }
 
 module "apim_nodo_monitoring_api" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-nodo-monitoring-api", var.env_short)
   api_management_name   = module.apim.name
@@ -64,7 +64,7 @@ module "apim_nodo_monitoring_api" {
 
   content_format = "openapi"
   content_value = templatefile("./api/nodopagamenti_api/monitoring/v1/_NodoDeiPagamenti.openapi.json.tpl", {
-    host    = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host    = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
     service = module.apim_nodo_dei_pagamenti_monitoring_product.product_id
   })
 

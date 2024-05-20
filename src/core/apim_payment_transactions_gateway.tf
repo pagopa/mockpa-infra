@@ -25,7 +25,7 @@ data "azurerm_key_vault_secret" "pgs_jwt_key" {
 ##############
 
 module "apim_payment_transactions_gateway_product" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_product?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_product?ref=v7.76.0"
 
   product_id   = "payment-transactions-gateway"
   display_name = "Payment Transactions Gateway pagoPA"
@@ -67,7 +67,7 @@ resource "azurerm_api_management_api_version_set" "payment_transactions_gateway_
 
 module "apim_payment_transactions_gateway_update_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-payment-transactions-gateway-update-api", local.project)
   api_management_name   = module.apim.name
@@ -85,7 +85,7 @@ module "apim_payment_transactions_gateway_update_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_transactions_gateway_api/update/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_transactions_gateway_api/update/v1/_base_policy.xml.tpl")
@@ -116,7 +116,7 @@ resource "azurerm_api_management_api_version_set" "payment_transactions_gateway_
 
 module "apim_payment_transactions_gateway_internal_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-payment-transactions-gateway-internal-api", local.project)
   api_management_name   = module.apim.name
@@ -134,7 +134,7 @@ module "apim_payment_transactions_gateway_internal_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_transactions_gateway_api/internal/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_transactions_gateway_api/internal/v1/_base_policy.xml.tpl")
@@ -165,7 +165,7 @@ resource "azurerm_api_management_api_version_set" "payment_transactions_gateway_
 
 module "apim_payment_transactions_gateway_external_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-payment-transactions-gateway-external-api", local.project)
   api_management_name   = module.apim.name
@@ -183,7 +183,7 @@ module "apim_payment_transactions_gateway_external_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_transactions_gateway_api/external/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = file("./api/payment_transactions_gateway_api/external/v1/_base_policy.xml.tpl")
@@ -215,7 +215,7 @@ resource "azurerm_api_management_api_version_set" "payment_transactions_gateway_
 
 module "apim_payment_transactions_gateway_pgsfe_api_v1" {
 
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = format("%s-payment-transactions-gateway-pgsfe-api", local.project)
   api_management_name   = module.apim.name
@@ -233,7 +233,7 @@ module "apim_payment_transactions_gateway_pgsfe_api_v1" {
 
   content_format = "openapi"
   content_value = templatefile("./api/payment_transactions_gateway_api/pgs-fe/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/payment_transactions_gateway_api/pgs-fe/v1/_base_policy.xml.tpl", {

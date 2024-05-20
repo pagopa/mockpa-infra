@@ -3,7 +3,7 @@
 ##############
 
 module "apim_node_forwarder_product" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_product?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_product?ref=v7.76.0"
 
   product_id   = "product-node-forwarder"
   display_name = "pagoPA Node Forwarder API"
@@ -30,7 +30,7 @@ resource "azurerm_api_management_api_version_set" "node_forwarder_api" {
 }
 
 module "apim_node_forwarder_api" {
-  source = "git::https://github.com/pagopa/azurerm.git//api_management_api?ref=v1.0.90"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v7.76.0"
 
   name                  = "${var.env_short}-node-forwarder-api"
   api_management_name   = module.apim.name
@@ -50,10 +50,14 @@ module "apim_node_forwarder_api" {
 
   content_format = "openapi"
   content_value = templatefile("./api/node_forwarder_api/v1/_openapi.json.tpl", {
-    host = azurerm_api_management_custom_domain.api_custom_domain.proxy[0].host_name
+    host = azurerm_api_management_custom_domain.api_custom_domain.gateway[0].host_name
   })
 
   xml_content = templatefile("./api/node_forwarder_api/v1/_base_policy.xml", {
+    # "xml_content" is part of a "count" value. Right now this value depends on resource attributes
+    # that cannot be determined until apply, so Terraform cannot predict how many instances will
+    # be created. To work around this, use the -target argument to first apply only the resources
+    # that the count depends on.
     node_forwarder_host_path = "https://${module.node_forwarder_app_service.default_site_hostname}"
   })
 
