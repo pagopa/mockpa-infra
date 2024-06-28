@@ -14,7 +14,7 @@
         <column name="author" type="varchar(36)"/>
     </createTable>
     <rollback>
-        <dropTable tableName="test_one"/>
+        <dropTable tableName="test_two"/>
     </rollback>
 </changeSet>
 
