@@ -125,10 +125,14 @@ variable "pagopa_proxy_redis_capacity" {
   default = 1
 }
 
+
 variable "pagopa_proxy_redis_sku_name" {
   type    = string
   default = null
 }
+
+
+
 
 variable "pagopa_proxy_redis_family" {
   type    = string
@@ -152,3 +156,4 @@ variable "redis_version" {
   default     = "6"
   description = "(Optional) redis version"
 }
+
