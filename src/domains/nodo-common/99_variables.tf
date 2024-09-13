@@ -100,8 +100,35 @@ variable "cidr_subnet_flex_dbms" {
   description = "Postgresql network address space."
 }
 
+variable "cidr_subnet_flex_storico_dbms" {
+  type        = list(string)
+  description = "Postgresql network address space."
+}
+
 # Postgres Flexible
 variable "pgres_flex_params" {
+  type = object({
+    enabled                                = bool
+    sku_name                               = string
+    db_version                             = string
+    storage_mb                             = string
+    zone                                   = number
+    standby_ha_zone                        = number
+    backup_retention_days                  = number
+    geo_redundant_backup_enabled           = bool
+    create_mode                            = string
+    pgres_flex_private_endpoint_enabled    = bool
+    pgres_flex_ha_enabled                  = bool
+    pgres_flex_pgbouncer_enabled           = bool
+    pgres_flex_diagnostic_settings_enabled = bool
+    max_connections                        = number
+    enable_private_dns_registration        = optional(bool, false)
+  })
+
+}
+
+# Postgres Flexible
+variable "pgres_flex_storico_params" {
   type = object({
     enabled                                = bool
     sku_name                               = string
@@ -125,6 +152,12 @@ variable "pgres_flex_params" {
 variable "pgres_flex_nodo_db_name" {
   type        = string
   description = "Nodo DB name"
+  default     = "nodo"
+}
+
+variable "pgres_flex_nodo_storico_db_name" {
+  type        = string
+  description = "Nodo Storico DB name"
   default     = "nodo"
 }
 
