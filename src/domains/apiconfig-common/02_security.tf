@@ -205,7 +205,7 @@ resource "azurerm_key_vault_secret" "postgresql_db_cfg_password" {
 }
 
 data "azurerm_redis_cache" "redis_cache" {
-  name                = var.redis_ha_enabled ? format("%s-%s-%s-redis", var.prefix, var.env_short, var.location_short) : format("%s-%s-redis", var.prefix, var.env_short)
+  name                = var.redis_ha_enabled ? format("%s-%s-%s-redis", var.prefix, var.env_short, var.location_short) : format("%s-%s-nodo-redis", var.prefix, var.env_short)
   resource_group_name = format("%s-%s-data-rg", var.prefix, var.env_short)
 }
 
