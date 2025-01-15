@@ -1,27 +1,19 @@
 locals {
   data_streams = { for d in var.configuration.dataStream : d =>  d}
+  application_id = "${var.configuration.id}-${var.env}"
+  dashboards = { for df in fileset("${var.dashboard_folder}", "/*.ndjson") : basename(df) => "${var.dashboard_folder}/${df}" }
 }
 
-output "conf" {
-  value = var.configuration
-}
-
-resource "elasticstack_kibana_space" "kibana_space" {
-  space_id          = var.configuration.id
-  name              = "${var.configuration.displayName}"
-  description       = "Space for ${var.configuration.displayName}"
-  disabled_features = var.configuration.space.disabledFeatures
-}
 
 resource "elasticstack_elasticsearch_ingest_pipeline" "ingest_pipeline" {
-  name        = "${var.configuration.id}-pipeline"
+  name        = "${local.application_id}-pipeline"
   description = "Ingest pipeline for ${var.configuration.displayName}"
 
   processors = [ for p in var.configuration.ingestPipeline.processors : jsonencode(p)]
 }
 
 resource "elasticstack_elasticsearch_index_lifecycle" "index_lifecycle" {
-  name = "${var.configuration.id}-ilm"
+  name = "${local.application_id}-ilm"
 
   hot {
     min_age = var.configuration.ilm.hot.minAge
@@ -64,31 +56,31 @@ resource "elasticstack_elasticsearch_index_lifecycle" "index_lifecycle" {
 }
 
 resource "elasticstack_elasticsearch_component_template" "component_template" {
-  name = "${var.configuration.id}@custom"
+  name = "${local.application_id}@custom"
 
   template {
 
     settings = jsonencode({
        "index": {
-        "default_pipeline": elasticstack_elasticsearch_ingest_pipeline.ingest_pipeline.name, #fixme count index
+        "default_pipeline": elasticstack_elasticsearch_ingest_pipeline.ingest_pipeline.name,
         "lifecycle": {
-          "name": elasticstack_elasticsearch_index_lifecycle.index_lifecycle.name #fixme count index
+          "name": elasticstack_elasticsearch_index_lifecycle.index_lifecycle.name
         }
       }
     })
   }
 
   metadata = jsonencode({
-    description = "Settings for ${var.configuration.id}"
+    description = "Settings for ${local.application_id}"
   })
 }
 
 resource "elasticstack_elasticsearch_index_template" "index_template" {
-  name = "${var.configuration.id}-idxtpl"
+  name = "${local.application_id}-idxtpl"
 
   priority       = 500
   index_patterns = [ var.configuration.indexTemplate.indexPattern ]
-  composed_of = [elasticstack_elasticsearch_component_template.component_template.name] #fixme count index
+  composed_of = [elasticstack_elasticsearch_component_template.component_template.name]
 
   data_stream {
     allow_custom_routing = false
@@ -106,7 +98,7 @@ resource "elasticstack_elasticsearch_index_template" "index_template" {
   }
 
   metadata = jsonencode({
-    "description" = "Index template for ${var.configuration.id}"
+    "description" = "Index template for ${local.application_id}"
   })
 }
 
@@ -123,11 +115,19 @@ resource "elasticstack_elasticsearch_data_stream" "data_stream" {
 
 
 resource "elasticstack_kibana_data_view" "kibana_data_view" {
-  space_id = elasticstack_kibana_space.kibana_space.id #fixme count index
+  space_id = var.space_id
   data_view = {
     name            = "Log ${var.configuration.dataView.indexIdentifier}"
     title           = "logs-${var.configuration.dataView.indexIdentifier}-*"
     time_field_name = "@timestamp"
   }
 
+}
+
+resource "elasticstack_kibana_import_saved_objects" "dashboard" {
+  for_each = local.dashboards
+
+  overwrite     = true
+
+  file_contents = file(each.value)
 }

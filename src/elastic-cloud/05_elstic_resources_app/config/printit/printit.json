@@ -1,9 +1,6 @@
 {
-  "id": "printit-${env}",
+  "id": "printit",
   "displayName": "Print It ${env}",
-  "space": {
-    "disabledFeatures": []
-  },
   "ingestPipeline": {
     "processors": [
       {
