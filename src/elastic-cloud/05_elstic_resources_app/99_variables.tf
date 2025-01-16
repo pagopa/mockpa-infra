@@ -37,3 +37,7 @@ variable "lifecycle_policy_wait_for_snapshot" {
   default = true
 }
 
+
+variable "elasticsearch_api_key" {
+  type = string
+}

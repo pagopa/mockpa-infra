@@ -16,7 +16,17 @@ module "app_resources" {
   env = var.env
   space_id = elasticstack_kibana_space.kibana_space[each.value.space_name].id
   dashboard_folder = each.value.dashboard_folder
+
+  default_ilm_conf = local.default_ilm
+  default_ingest_pipeline_conf = local.default_ingest_pipeline
+  default_component_package = jsondecode(templatefile("./defaults/component@package.json", {
+    name =  each.key
+  }))
+
+  elasticsearch_api_key = var.elasticsearch_api_key
+  kibana_endpoint = data.ec_deployment.ec_deployment.kibana[0].https_endpoint
 }
+
 
 
 

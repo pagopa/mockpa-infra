@@ -1,52 +1,54 @@
 locals {
   data_streams = { for d in var.configuration.dataStream : d =>  d}
   application_id = "${var.configuration.id}-${var.env}"
-  dashboards = { for df in fileset("${var.dashboard_folder}", "/*.ndjson") : basename(df) => "${var.dashboard_folder}/${df}" }
+  dashboards = { for df in fileset("${var.dashboard_folder}", "/*.ndjson") : trimsuffix(basename(df), ".ndjson") => "${var.dashboard_folder}/${df}" }
+  ilm = lookup(var.configuration, "ilm", var.default_ilm_conf )
+  packageComponent = lookup(var.configuration, "packageComponent", "default") != "default" ? lookup(var.configuration, "customPackageComponent", null) : var.default_component_package
 }
-
 
 resource "elasticstack_elasticsearch_ingest_pipeline" "ingest_pipeline" {
   name        = "${local.application_id}-pipeline"
   description = "Ingest pipeline for ${var.configuration.displayName}"
 
-  processors = [ for p in var.configuration.ingestPipeline.processors : jsonencode(p)]
+  processors = [ for p in lookup(var.configuration, "ingestPipeline", var.default_ingest_pipeline_conf).processors : jsonencode(p)]
 }
 
 resource "elasticstack_elasticsearch_index_lifecycle" "index_lifecycle" {
   name = "${local.application_id}-ilm"
 
   hot {
-    min_age = var.configuration.ilm.hot.minAge
+    min_age =  lookup(lookup(local.ilm, "hot", var.default_ilm_conf.hot), "minAge", var.default_ilm_conf.hot.minAge)
     rollover {
-      max_age = var.configuration.ilm.hot.rollover.maxAge
-      max_primary_shard_size = var.configuration.ilm.hot.rollover.maxPrimarySize
+      max_age =  lookup(lookup(lookup(local.ilm, "hot", var.default_ilm_conf.hot), "rollover", var.default_ilm_conf.hot.rollover), "maxAge", var.default_ilm_conf.hot.rollover.maxAge)
+      max_primary_shard_size =  lookup(lookup(lookup(local.ilm, "hot", var.default_ilm_conf.hot), "rollover", var.default_ilm_conf.hot.rollover), "maxPrimarySize", var.default_ilm_conf.hot.rollover.maxPrimarySize)
     }
   }
 
   warm {
-    min_age = var.configuration.ilm.warm.minAge
+    min_age =  lookup(lookup(local.ilm, "warm", var.default_ilm_conf.warm), "minAge", var.default_ilm_conf.warm.minAge)
     set_priority {
-      priority = var.configuration.ilm.warm.setPriority
+      priority =  lookup(lookup(local.ilm, "warm", var.default_ilm_conf.warm), "setPriority", var.default_ilm_conf.warm.setPriority)
     }
   }
 
   cold {
-    min_age = var.configuration.ilm.cold.minAge
+    min_age =  lookup(lookup(local.ilm, "cold", var.default_ilm_conf.cold), "minAge", var.default_ilm_conf.cold.minAge)
     set_priority {
-      priority = var.configuration.ilm.cold.setPriority
+      priority =  lookup(lookup(local.ilm, "cold", var.default_ilm_conf.cold), "setPriority", var.default_ilm_conf.cold.setPriority)
     }
   }
 
   delete {
-    min_age = var.configuration.ilm.delete.minAge
+    min_age =  lookup(lookup(local.ilm, "delete", var.default_ilm_conf.delete), "minAge", var.default_ilm_conf.delete.minAge)
+
     dynamic "wait_for_snapshot" {
-      for_each = var.configuration.ilm.delete.waitForSnapshot ? [1] : []
+      for_each =  lookup(lookup(local.ilm, "delete", var.default_ilm_conf.delete), "waitForSnapshot", var.default_ilm_conf.delete.waitForSnapshot) ? [1] : []
       content {
         policy = var.default_snapshot_policy_name
       }
     }
     delete {
-      delete_searchable_snapshot = var.configuration.ilm.delete.deleteSearchableSnapshot
+      delete_searchable_snapshot =  lookup(lookup(local.ilm, "delete", var.default_ilm_conf.delete), "deleteSearchableSnapshot", var.default_ilm_conf.delete.deleteSearchableSnapshot)
     }
   }
 
@@ -75,12 +77,28 @@ resource "elasticstack_elasticsearch_component_template" "component_template" {
   })
 }
 
+
+
+resource "elasticstack_elasticsearch_component_template" "package_template" {
+  count = lookup(var.configuration, "packageComponent", null) == null ? 0 : 1
+
+  name = "${local.application_id}@package"
+
+  template {
+
+    settings = jsonencode(lookup(local.packageComponent.template, "settings", null))
+    mappings = jsonencode(lookup(local.packageComponent.template, "mappings", null))
+  }
+
+  metadata = jsonencode(lookup(local.packageComponent, "_meta", null))
+}
+
 resource "elasticstack_elasticsearch_index_template" "index_template" {
   name = "${local.application_id}-idxtpl"
 
   priority       = 500
   index_patterns = [ var.configuration.indexTemplate.indexPattern ]
-  composed_of = [elasticstack_elasticsearch_component_template.component_template.name]
+  composed_of = lookup(var.configuration, "packageComponent", null) == null ?    [elasticstack_elasticsearch_component_template.component_template.name] :    [elasticstack_elasticsearch_component_template.component_template.name, elasticstack_elasticsearch_component_template.package_template[0].name]
 
   data_stream {
     allow_custom_routing = false
@@ -130,4 +148,44 @@ resource "elasticstack_kibana_import_saved_objects" "dashboard" {
   overwrite     = true
 
   file_contents = file(each.value)
+}
+
+
+
+resource "null_resource" "data_view_runtime_field" {
+  for_each = lookup(var.configuration, "runtimeFields", {})
+
+  depends_on = [elasticstack_kibana_data_view.kibana_data_view]
+
+  triggers = {
+    field_name = each.key
+    field_definition = jsonencode(each.value)
+    data_view = elasticstack_kibana_data_view.kibana_data_view.data_view.title
+    space_id = var.space_id
+    kibana_endpoint = var.kibana_endpoint
+    api_key = var.elasticsearch_api_key
+  }
+
+  provisioner "local-exec" {
+    command     = <<EOT
+    curl -k -X POST '${self.triggers.kibana_endpoint}/s/${self.triggers.space_id}/api/data_views/data_view/${self.triggers.data_view}/runtime_field' \
+      --header 'kbn-xsrf: true' \
+      --header 'Content-Type: application/json' \
+      --header 'Authorization: ApiKey ${base64encode(self.triggers.api_key)}' \
+      --data '${self.triggers.field_definition}'
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+   provisioner "local-exec" {
+    when    = destroy
+    command = <<EOT
+    curl -k -X DELETE '${self.triggers.kibana_endpoint}/s/${self.triggers.space_id}/api/data_views/data_view/${self.triggers.data_view}/runtime_field/${self.triggers.field_name}' \
+      --header 'kbn-xsrf: true' \
+      --header 'Content-Type: application/json' \
+      --header 'Authorization: ApiKey ${base64encode(self.triggers.api_key)}'
+    EOT
+     interpreter = ["/bin/bash", "-c"]
+  }
+
 }

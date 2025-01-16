@@ -43,3 +43,8 @@ variable "ec_deployment_id" {
 }
 
 
+variable "lifecycle_policy_wait_for_snapshot" {
+  type = bool
+  description = "(Optional) True if the index lifecycle policy has to wait for snapshots before deletion"
+  default = true
+}

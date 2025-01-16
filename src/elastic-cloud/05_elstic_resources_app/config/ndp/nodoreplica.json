@@ -1,14 +1,14 @@
 {
-  "id": "nodo",
-  "displayName": "Nodo dei Pagamenti ${env}",
+  "id": "nodoreplica",
+  "displayName": "Nodo dei Pagamenti replica ${env}",
   "indexTemplate": {
-    "indexPattern" : "logs-${env_separator}nodo-*"
+    "indexPattern" : "logs-${env_separator}nodoreplica-*"
   },
   "dataStream": [
-    "logs-${env_separator}nodo-default"
+    "logs-${env_separator}nodoreplica-default"
   ],
   "dataView": {
-    "indexIdentifier": "${env_separator}nodo"
+    "indexIdentifier": "${env_separator}nodoreplica"
   },
   "ingestPipeline": {
     "processors": [

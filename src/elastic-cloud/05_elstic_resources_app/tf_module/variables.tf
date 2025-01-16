@@ -17,3 +17,24 @@ variable "env" {
 variable "dashboard_folder" {
   type = string
 }
+
+variable "default_ingest_pipeline_conf" {
+  type = any
+}
+
+variable "default_ilm_conf" {
+  type = any
+}
+
+variable "default_component_package" {
+  type = any
+}
+
+variable "elasticsearch_api_key" {
+  type = string
+}
+
+variable "kibana_endpoint" {
+  type = string
+}
+

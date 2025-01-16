@@ -1,0 +1,47 @@
+{
+  "id": "pagopa",
+  "displayName": "pagoPA ${env}",
+  "indexTemplate": {
+    "indexPattern" : "logs-${env_separator}kubernetes.container_logs-*"
+  },
+  "dataStream": [
+    "logs-${env_separator}kubernetes.container_logs-default"
+  ],
+  "dataView": {
+    "indexIdentifier": "${env_separator}kubernetes.container_logs"
+  },
+  "ingestPipeline": {
+    "processors": [
+      {
+        "json": {
+          "field": "message",
+          "add_to_root": true,
+          "ignore_failure": true
+        }
+      },
+      {
+        "convert": {
+          "field": "responseTime",
+          "type": "long",
+          "target_field": "response_time",
+          "ignore_missing": true,
+          "ignore_failure": true
+        }
+      },
+      {
+        "convert": {
+          "field": "httpCode",
+          "type": "integer",
+          "target_field": "http_code",
+          "ignore_missing": true,
+          "ignore_failure": true
+        }
+      }
+    ]
+
+  },
+  "runtimeFields": {
+    "faultCode" : { "name": "faultCode", "runtimeField": { "type": "keyword", "script": {"source": "String message = params[\"_source\"][\"message\"];def m = /^.*title=(.*)(?=, status).*$/.matcher(message);if ( m.matches() ) {return emit(m.group(1));} else{return emit(\"-\");}"}}},
+    "faultDetail": { "name": "faultDetail", "runtimeField": { "type": "keyword", "script": {"source": "String message = params[\"_source\"][\"message\"];\n\ndef m = /^.*detail=(.*)(?=\\)).*$/.matcher(message);\nif ( m.matches() ) {\n   return emit(m.group(1));\n} else {\n   return emit(\"-\");\n}"}}}
+  }
+}

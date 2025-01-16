@@ -18,4 +18,4 @@ folder structure:
 
 
 Define a new json file containing all the required information to allow the creation of a space and all required resource to manage the logs of an application.
-The file name must match
+
