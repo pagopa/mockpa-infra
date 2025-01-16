@@ -14,9 +14,7 @@ variable "env" {
   type = string
 }
 
-variable "dashboard_folder" {
-  type = string
-}
+
 
 variable "default_ingest_pipeline_conf" {
   type = any
@@ -37,4 +35,5 @@ variable "elasticsearch_api_key" {
 variable "kibana_endpoint" {
   type = string
 }
+
 

@@ -1,7 +1,7 @@
 locals {
   data_streams = { for d in var.configuration.dataStream : d =>  d}
   application_id = "${var.configuration.id}-${var.env}"
-  dashboards = { for df in fileset("${var.dashboard_folder}", "/*.ndjson") : trimsuffix(basename(df), ".ndjson") => "${var.dashboard_folder}/${df}" }
+
   ilm = lookup(var.configuration, "ilm", var.default_ilm_conf )
   packageComponent = lookup(var.configuration, "packageComponent", "default") != "default" ? lookup(var.configuration, "customPackageComponent", null) : var.default_component_package
 }
@@ -142,13 +142,6 @@ resource "elasticstack_kibana_data_view" "kibana_data_view" {
 
 }
 
-resource "elasticstack_kibana_import_saved_objects" "dashboard" {
-  for_each = local.dashboards
-
-  overwrite     = true
-
-  file_contents = file(each.value)
-}
 
 
 
@@ -189,3 +182,4 @@ resource "null_resource" "data_view_runtime_field" {
   }
 
 }
+

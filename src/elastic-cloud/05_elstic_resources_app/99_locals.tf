@@ -12,9 +12,17 @@ locals {
             name = trimsuffix(basename(f), ".json")
           }))
       space_name = substr(dirname(f), length("${local.config_folder_name}/"), -1)
-      dashboard_folder = "${dirname(f)}/dashboards"
+      dashboard_folder = "${dirname(f)}/dashboard"
+      query_folder = "${dirname(f)}/query"
     }
   }
   unique_space_folders = toset([for f in local.config_files : dirname(f)])
   spaces = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => substr(f, length("${local.config_folder_name}/"), -1)}
+
+  dashboards = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => "${substr(f, length("${local.config_folder_name}/"), -1)}/dashboard" }
+
+
+
+  queries = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => "${substr(f, length("${local.config_folder_name}/"), -1)}/query" }
+
 }
