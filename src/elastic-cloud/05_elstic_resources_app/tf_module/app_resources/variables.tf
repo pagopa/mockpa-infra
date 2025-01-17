@@ -28,14 +28,6 @@ variable "default_component_package" {
   type = any
 }
 
-variable "elasticsearch_api_key" {
-  type = string
-}
-
-variable "kibana_endpoint" {
-  type = string
-}
-
 variable "query_folder" {
   type = string
 }

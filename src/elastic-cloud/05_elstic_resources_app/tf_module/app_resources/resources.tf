@@ -5,6 +5,11 @@ locals {
   queries = { for df in fileset("${var.query_folder}", "/*.ndjson") : trimsuffix(basename(df), ".ndjson") => "${var.query_folder}/${df}" }
   ilm = lookup(var.configuration, "ilm", var.default_ilm_conf )
   packageComponent = lookup(var.configuration, "packageComponent", "default") != "default" ? lookup(var.configuration, "customPackageComponent", null) : var.default_component_package
+  runtime_fields = { for field in lookup(var.configuration.dataView, "runtimeFields", {}) : field.name => {
+      type = field.runtimeField.type
+      script_source = field.runtimeField.script.source
+    }
+  }
 }
 
 resource "elasticstack_elasticsearch_ingest_pipeline" "ingest_pipeline" {
@@ -140,49 +145,9 @@ resource "elasticstack_kibana_data_view" "kibana_data_view" {
     name            = "Log ${var.configuration.dataView.indexIdentifier}"
     title           = "logs-${var.configuration.dataView.indexIdentifier}-*"
     time_field_name = "@timestamp"
+
+    runtime_field_map = local.runtime_fields
   }
-
-}
-
-
-
-
-resource "null_resource" "data_view_runtime_field" {
-  for_each = lookup(var.configuration, "runtimeFields", {})
-
-  depends_on = [elasticstack_kibana_data_view.kibana_data_view]
-
-  triggers = {
-    field_name = each.key
-    field_definition = jsonencode(each.value)
-    data_view = elasticstack_kibana_data_view.kibana_data_view.data_view.title
-    space_id = var.space_id
-    kibana_endpoint = var.kibana_endpoint
-    api_key = var.elasticsearch_api_key
-  }
-
-  provisioner "local-exec" {
-    command     = <<EOT
-    curl -k -X POST '${self.triggers.kibana_endpoint}/s/${self.triggers.space_id}/api/data_views/data_view/${self.triggers.data_view}/runtime_field' \
-      --header 'kbn-xsrf: true' \
-      --header 'Content-Type: application/json' \
-      --header 'Authorization: ApiKey ${base64encode(self.triggers.api_key)}' \
-      --data '${self.triggers.field_definition}'
-    EOT
-    interpreter = ["/bin/bash", "-c"]
-  }
-
-   provisioner "local-exec" {
-    when    = destroy
-    command = <<EOT
-    curl -k -X DELETE '${self.triggers.kibana_endpoint}/s/${self.triggers.space_id}/api/data_views/data_view/${self.triggers.data_view}/runtime_field/${self.triggers.field_name}' \
-      --header 'kbn-xsrf: true' \
-      --header 'Content-Type: application/json' \
-      --header 'Authorization: ApiKey ${base64encode(self.triggers.api_key)}'
-    EOT
-     interpreter = ["/bin/bash", "-c"]
-  }
-
 }
 
 resource "elasticstack_kibana_import_saved_objects" "dashboard" {

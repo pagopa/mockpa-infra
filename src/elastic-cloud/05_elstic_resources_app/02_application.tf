@@ -22,9 +22,6 @@ module "app_resources" {
     name =  each.key
   }))
 
-  elasticsearch_api_key = var.elasticsearch_api_key
-  kibana_endpoint = data.ec_deployment.ec_deployment.kibana[0].https_endpoint
-
   query_folder = each.value.query_folder
   dashboard_folder = each.value.dashboard_folder
 }
