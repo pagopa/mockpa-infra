@@ -2,27 +2,22 @@ locals {
   prefix             = "pagopa"
   product = "${local.prefix}-${var.env}"
   config_folder_name = "config"
-  config_files = fileset(path.module, "${local.config_folder_name}/*/*.json")
+  config_files = fileset(path.module, "${local.config_folder_name}/*/*/settings.json")
   configurations     = {
-    for f in local.config_files : trimsuffix(basename(f), ".json") => {
+    for f in local.config_files : jsondecode(file(f)).id => {
       conf = jsondecode(templatefile(f, {
             env               = var.env
             env_separator     = "${var.env}-"
             wait_for_snapshot = var.lifecycle_policy_wait_for_snapshot
             name = trimsuffix(basename(f), ".json")
           }))
-      space_name = substr(dirname(f), length("${local.config_folder_name}/"), -1)
+      space_name = split("/", dirname(f))[1] #get space name from structure config/<space_name>/<application_name>
       dashboard_folder = "${dirname(f)}/dashboard"
       query_folder = "${dirname(f)}/query"
     }
   }
-  unique_space_folders = toset([for f in local.config_files : dirname(f)])
-  spaces = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => substr(f, length("${local.config_folder_name}/"), -1)}
-
-  dashboards = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => "${substr(f, length("${local.config_folder_name}/"), -1)}/dashboard" }
-
-
-
-  queries = { for f in local.unique_space_folders : substr(f, length("${local.config_folder_name}/"), -1) => "${substr(f, length("${local.config_folder_name}/"), -1)}/query" }
-
+  spaces = toset([for f in local.config_files : split("/", dirname(f))[1]]) #get space name from structure config/<space_name>/<application_name>
 }
+
+
+

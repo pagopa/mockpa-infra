@@ -1,7 +1,8 @@
 locals {
   data_streams = { for d in var.configuration.dataStream : d =>  d}
   application_id = "${var.configuration.id}-${var.env}"
-
+  dashboards = { for df in fileset("${var.dashboard_folder}", "/*.ndjson") : trimsuffix(basename(df), ".ndjson") => "${var.dashboard_folder}/${df}" }
+  queries = { for df in fileset("${var.query_folder}", "/*.ndjson") : trimsuffix(basename(df), ".ndjson") => "${var.query_folder}/${df}" }
   ilm = lookup(var.configuration, "ilm", var.default_ilm_conf )
   packageComponent = lookup(var.configuration, "packageComponent", "default") != "default" ? lookup(var.configuration, "customPackageComponent", null) : var.default_component_package
 }
@@ -135,6 +136,7 @@ resource "elasticstack_elasticsearch_data_stream" "data_stream" {
 resource "elasticstack_kibana_data_view" "kibana_data_view" {
   space_id = var.space_id
   data_view = {
+    id              = "log_${var.configuration.dataView.indexIdentifier}"
     name            = "Log ${var.configuration.dataView.indexIdentifier}"
     title           = "logs-${var.configuration.dataView.indexIdentifier}-*"
     time_field_name = "@timestamp"
@@ -182,4 +184,27 @@ resource "null_resource" "data_view_runtime_field" {
   }
 
 }
+
+resource "elasticstack_kibana_import_saved_objects" "dashboard" {
+  for_each = local.dashboards
+  depends_on = [elasticstack_kibana_data_view.kibana_data_view]
+  overwrite     = true
+  space_id = var.space_id
+  file_contents = templatefile(each.value, {
+    data_view = elasticstack_kibana_data_view.kibana_data_view.data_view.id
+  })
+}
+
+
+
+resource "elasticstack_kibana_import_saved_objects" "query" {
+  for_each = local.queries
+  depends_on = [elasticstack_kibana_data_view.kibana_data_view]
+
+  overwrite     = true
+  space_id = var.space_id
+
+  file_contents = file(each.value)
+}
+
 
