@@ -10,6 +10,7 @@
   "dataView": {
     "indexIdentifier": "${env_separator}nodo"
   },
+  "customComponent": "default",
   "ingestPipeline": {
     "processors": [
       {

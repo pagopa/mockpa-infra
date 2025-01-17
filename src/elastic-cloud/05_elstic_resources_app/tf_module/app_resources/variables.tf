@@ -24,7 +24,11 @@ variable "default_ilm_conf" {
   type = any
 }
 
-variable "default_component_package" {
+variable "default_component_package_template" {
+  type = any
+}
+
+variable "default_component_custom_template" {
   type = any
 }
 
