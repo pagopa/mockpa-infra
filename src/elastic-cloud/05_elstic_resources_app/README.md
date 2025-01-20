@@ -16,6 +16,8 @@ export ELASTICSEARCH_API_KEY=<deployment api key from kibana portal>
 ```
 **NOTE**: this is different from the elastic cloud api key
 
+for details on how to configure a new space/application, please refer to the `config` folder README
+
 
 <!-- markdownlint-disable -->
 <!-- BEGIN_TF_DOCS -->
