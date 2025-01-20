@@ -2,7 +2,7 @@ locals {
   prefix             = "pagopa"
   product = "${local.prefix}-${var.env}"
   config_folder_name = "config"
-  config_files = fileset(path.module, "${local.config_folder_name}/*/*/settings.json")
+  config_files = fileset(path.module, "${local.config_folder_name}/*/*/appSettings.json")
   configurations     = {
     for f in local.config_files : jsondecode(file(f)).id => {
       conf = jsondecode(templatefile(f, {

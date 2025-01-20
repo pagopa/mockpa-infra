@@ -21,11 +21,11 @@ config
 │ │ │ └── Monitor_Tempi_pspNotifyPayment_sendPaymentOutcome.ndjson
 │ │ ├── query                   // queries for this app
 │ │ │ └── filter_re_jsonlog.ndjson
-│ │ └── settings.json           // this name is required. this app configuration
+│ │ └── appSettings.json           // this name is required. this app configuration
 ├── pagopa                      // another space
 │ └── pagopa                    // another application name, same as the space (single app in space)
 │     ├── dashboard             // this app dashboards
 │     │ └── upload.ndjson
-│     └── settings.json         // this app configuration
+│     └── appSettings.json         // this app configuration
 ```
 
