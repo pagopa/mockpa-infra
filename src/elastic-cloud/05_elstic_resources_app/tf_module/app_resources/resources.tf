@@ -25,6 +25,7 @@ resource "elasticstack_elasticsearch_ingest_pipeline" "ingest_pipeline" {
   description = "Ingest pipeline for ${var.configuration.displayName}"
 
   processors = [ for p in lookup(var.configuration, "ingestPipeline", var.default_ingest_pipeline_conf).processors : jsonencode(p)]
+  on_failure = length(lookup(lookup(var.configuration, "ingestPipeline", var.default_ingest_pipeline_conf), "onFailure", [])) > 0 ? [ for p in lookup(lookup(var.configuration, "ingestPipeline", var.default_ingest_pipeline_conf), "onFailure", []) : jsonencode(p)] : null
 }
 
 resource "elasticstack_elasticsearch_index_lifecycle" "index_lifecycle" {
