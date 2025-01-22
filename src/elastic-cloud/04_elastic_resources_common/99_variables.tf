@@ -48,3 +48,8 @@ variable "lifecycle_policy_wait_for_snapshot" {
   description = "(Optional) True if the index lifecycle policy has to wait for snapshots before deletion"
   default = true
 }
+
+variable "dedicated_log_instance_name" {
+  type = list(string)
+  default = []
+}

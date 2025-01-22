@@ -4,6 +4,8 @@ locals {
   deployment_name = "${local.project}-${substr(random_uuid.uuid.result, 0, 6)}"
   realm_name = "kibana-realm"
   kibana_url = "https://${local.deployment_name}.${var.location}.azure.elastic-cloud.com"
+  apm_url = "https://${local.deployment_name}.apm.${var.location}.azure.elastic-cloud.com"
+  fleet_url = "https://${local.deployment_name}.fleet.${var.location}.azure.elastic-cloud.com"
 }
 
 resource "ec_deployment" "elastic-cloud" {
@@ -12,6 +14,22 @@ resource "ec_deployment" "elastic-cloud" {
   region                 = "azure-${var.location}"
   version                = "8.17.0"
   deployment_template_id = "azure-storage-optimized"
+
+
+  integrations_server    = {
+     elasticsearch_cluster_ref_id          = "main-elasticsearch"
+     endpoints                             = {
+       apm   = local.apm_url
+       fleet = local.fleet_url
+       profiling = null
+       symbols  = null
+     }
+     instance_configuration_id             = "azure.integrationsserver.fsv2"
+     instance_configuration_version        = 2
+     size                                  = "1g" #fixme
+     size_resource                         = "memory"
+     zone_count                            = 1 # fixme
+  }
 
   elasticsearch = {
     hot = {
